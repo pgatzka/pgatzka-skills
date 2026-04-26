@@ -1,5 +1,5 @@
 ---
-description: Bootstrap a minimal README.md (title, description, Prerequisites / Install / Run). Refuses to overwrite an existing README; asks the user when detection is ambiguous.
+description: Bootstrap a minimal README.md (title, description, Prerequisites / Install / Run). Refuses to overwrite an existing README; asks when detection is ambiguous.
 argument-hint: [optional path]
 ---
 

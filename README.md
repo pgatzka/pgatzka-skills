@@ -26,7 +26,7 @@ Then install whichever plugins you want:
 | [`java-development`](plugins/java-development) | Java engineering skills: `java-logging` (structured SLF4J, sensible levels, no sensitive data, no stack traces at ERROR), `javadoc` (don't state the obvious, all-or-nothing, ask before renaming bad params), `lombok` (use it if the project does, ask before adopting it if it doesn't). |
 | [`sql-development`](plugins/sql-development) | SQL / relational database skills. Currently: `database-design` (schema conventions, audit columns, dialect-aware rules across Postgres / MySQL / SQL Server / Oracle / SQLite, online migration safety, ASK-first on every undecided detail). |
 | [`workflow`](plugins/workflow) | Skills governing how Claude interacts with me. Currently: `ask-user-questions` (one-topic-per-question discipline), `persist-project-preferences` (durable preferences land in `CLAUDE.md`, not local memory). |
-| [`documentation`](plugins/documentation) | Documentation skills. Currently: `readme` (strict minimum — title, description, dev setup; nothing else by default) plus the `/readme-init` command to bootstrap a new minimal README. |
+| [`documentation`](plugins/documentation) | Documentation skills. `readme` (strict-minimum README — title, description, dev setup) and `wiki` (GitHub Wiki via submodule, five-category Tutorials/How-to/Reference/Explanations/Development taxonomy, pattern-detection prompt, post-task update check). Commands: `/readme-init`, `/wiki-init`. |
 
 ## Repo layout
 
@@ -69,9 +69,12 @@ Then install whichever plugins you want:
 │       ├── .claude-plugin/
 │       │   └── plugin.json
 │       ├── commands/
-│       │   └── readme-init.md
+│       │   ├── readme-init.md
+│       │   └── wiki-init.md
 │       └── skills/
-│           └── readme/
+│           ├── readme/
+│           │   └── SKILL.md
+│           └── wiki/
 │               └── SKILL.md
 ├── README.md
 └── .gitignore

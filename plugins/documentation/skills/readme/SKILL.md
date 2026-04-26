@@ -77,16 +77,34 @@ The user might intentionally not have a README in that directory (subdirectories
 
 If the user confirms — or invokes the `/readme-init` slash command — produce the minimum: title, description, Prerequisites/Install/Run. Nothing else, even if other content seems "nice to have."
 
+## After finishing any non-trivial task
+
+When you complete a task that changed code, configuration, or workflow, check before reporting the work done: **does the README need an update?**
+
+Mental scan:
+
+- Did the dev setup change (new Prerequisite, different Install command, different Run command)? → README dev-setup section likely needs an update.
+- Did the project's purpose or scope shift in a way that makes the description sentence inaccurate? → tweak the description.
+- Did the task remove or rename something the README currently mentions (a binary, a flag, a script in `Install` / `Run`)? → flag the staleness with evidence and ask before deleting.
+
+If any answer is yes, surface it with the specific change — *"the task removed `make build`; the README's Install section still mentions it; want me to update to `npm run build` or remove the line?"* The user decides whether to act now, defer, or skip. Don't auto-edit.
+
+The check is mandatory; the writing is gated.
+
+See also the `wiki` skill's matching post-task check for wiki updates — both should run after substantial work.
+
 ## Quick reference
 
 | Content | Where it goes |
 |---|---|
 | Project title, description, dev setup | `README.md` |
+| User-facing docs (tutorials, how-tos, reference, explanations) | Wiki (use the `wiki` skill) |
+| Contributor docs (patterns, conventions, contributing) | Wiki Development section (use the `wiki` skill) |
 | Claude / agent rules and conventions | `CLAUDE.md` (use `persist-project-preferences`) |
 | Package / module structure | Nowhere — read the file tree |
 | API documentation | Generated docs site / source comments |
-| Architecture diagrams, deeper docs | `docs/` |
+| Architecture decisions, internal notes | `docs/` |
 | Changelog | `CHANGELOG.md` |
-| Contributing guide | `CONTRIBUTING.md` |
+| Contributing guide (when stable) | `CONTRIBUTING.md` or wiki Development |
 | Code style | `.editorconfig`, linter config, or `STYLE.md` |
 | Aspirational / roadmap content | Nowhere in the repo (use issues / a project board) |

@@ -37,9 +37,9 @@
     {
       "name": "documentation",
       "source": "./plugins/documentation",
-      "description": "Personal documentation skills. Currently: readme (strict-minimum README discipline — title, description, dev setup, nothing else by default) plus the /readme-init command to bootstrap one.",
+      "description": "Personal documentation skills. Currently: readme (strict-minimum README discipline) and wiki (GitHub Wiki via submodule, five-category Diátaxis+Development taxonomy, post-task doc-update check), plus /readme-init and /wiki-init commands.",
       "category": "tooling",
-      "keywords": ["documentation", "readme", "docs"]
+      "keywords": ["documentation", "readme", "wiki", "docs"]
     }
   ]
 }
