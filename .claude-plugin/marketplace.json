@@ -9,10 +9,16 @@
     {
       "name": "java-development",
       "source": "./plugins/java-development",
-      "description": "Personal Java development helpers. Currently includes structured logging (SLF4J) guidance.",
-      "version": "0.1.0",
+      "description": "Personal Java development helpers. Includes structured logging (SLF4J), Javadoc, and Lombok conventions.",
       "category": "language",
-      "keywords": ["java", "logging", "slf4j"]
+      "keywords": ["java", "logging", "slf4j", "javadoc", "lombok"]
+    },
+    {
+      "name": "git",
+      "source": "./plugins/git",
+      "description": "Personal git workflow helpers. Currently includes .gitignore conventions (minimal, anchored, sorted entries).",
+      "category": "tooling",
+      "keywords": ["git", "gitignore", "vcs"]
     }
   ]
 }

@@ -22,7 +22,8 @@ Then install whichever plugins you want:
 
 | Plugin | What it does |
 |---|---|
-| [`java-development`](plugins/java-development) | Java engineering skills. Currently: `java-logging` (structured SLF4J logging conventions, sensible log levels, no sensitive data, no stack traces at ERROR). |
+| [`git`](plugins/git) | Git workflow skills. Currently: `gitignore` (minimal, anchored, alphabetically-sorted entries — no speculative bulk-adds). |
+| [`java-development`](plugins/java-development) | Java engineering skills: `java-logging` (structured SLF4J, sensible levels, no sensitive data, no stack traces at ERROR), `javadoc` (don't state the obvious, all-or-nothing, ask before renaming bad params), `lombok` (use it if the project does, ask before adopting it if it doesn't). |
 
 ## Repo layout
 
@@ -31,11 +32,21 @@ Then install whichever plugins you want:
 ├── .claude-plugin/
 │   └── marketplace.json          # marketplace manifest — lists plugins
 ├── plugins/
+│   ├── git/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/
+│   │       └── gitignore/
+│   │           └── SKILL.md
 │   └── java-development/
 │       ├── .claude-plugin/
-│       │   └── plugin.json       # plugin metadata
+│       │   └── plugin.json
 │       └── skills/
-│           └── java-logging/
+│           ├── java-logging/
+│           │   └── SKILL.md
+│           ├── javadoc/
+│           │   └── SKILL.md
+│           └── lombok/
 │               └── SKILL.md
 ├── README.md
 └── .gitignore
@@ -48,8 +59,8 @@ Each plugin under `plugins/<name>/` is a self-contained directory with its own `
 1. Create `plugins/<plugin-name>/.claude-plugin/plugin.json`.
 2. Add skills under `plugins/<plugin-name>/skills/<skill-name>/SKILL.md` (or `commands/`, `agents/`, `hooks/` as needed).
 3. Append an entry to `plugins` in `.claude-plugin/marketplace.json`.
-4. Bump versions, commit, push.
+4. Commit and push.
 
 ## Adding a new skill to an existing plugin
 
-Drop it under `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`. Bump the plugin's `version` in its `plugin.json`.
+Drop it under `plugins/<plugin-name>/skills/<skill-name>/SKILL.md` and commit. The plugin's git commit SHA is the version — no `version` field to bump in the manifests.

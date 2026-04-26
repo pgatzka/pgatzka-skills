@@ -29,6 +29,32 @@ public class OrderService {
 
 The logger field convention: `private static final Logger log = LoggerFactory.getLogger(<EnclosingClass>.class);`. Static + final + named `log` (or `LOG`) — keep it consistent with the surrounding file.
 
+**If Lombok is on the classpath, use the Lombok logger annotation instead of declaring the field by hand.** Lombok generates the same `private static final Logger log = ...` for you, removing the boilerplate (and the chance of pasting the wrong class into `getLogger(...)` after a rename).
+
+```java
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class OrderService {
+    // log.info(...) just works — Lombok generates the field
+}
+```
+
+Pick the annotation that matches the project's logging API:
+
+| Annotation | Generates a logger for |
+|---|---|
+| `@Slf4j` (default — match this skill's SLF4J default) | `org.slf4j.Logger` |
+| `@Log4j2` | `org.apache.logging.log4j.Logger` |
+| `@CommonsLog` | Apache Commons Logging |
+| `@JBossLog` | JBoss Logging |
+| `@Flogger` | Google Flogger |
+| `@Log` | `java.util.logging.Logger` (avoid unless the project has chosen JUL) |
+
+How to tell Lombok is present: a `lombok` dependency in `pom.xml` / `build.gradle` (group `org.projectlombok`), or existing usage of any Lombok annotation (`@Data`, `@Builder`, `@RequiredArgsConstructor`, etc.) in the codebase. If unsure, grep for `import lombok.` — if you find any, Lombok is in use and the annotation is the right tool.
+
+Don't mix styles within one project — if the surrounding files already use `@Slf4j`, follow that. If they declare the field manually and Lombok is *not* a dependency, declare the field manually too. Introducing Lombok purely to use `@Slf4j` is a project-level decision; ask before adding the dependency.
+
 ### 2. Parameterized messages, never string concatenation or `String.format`
 
 ```java
