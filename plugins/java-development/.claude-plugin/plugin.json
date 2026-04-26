@@ -1,0 +1,11 @@
+{
+  "name": "java-development",
+  "version": "0.1.0",
+  "description": "Personal Java development skills: structured logging conventions, with more to come.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "keywords": ["java", "logging", "slf4j"],
+  "license": "MIT"
+}
