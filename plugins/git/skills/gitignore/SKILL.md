@@ -13,9 +13,13 @@ The rules below keep `.gitignore` tight, predictable, and verifiable. They optim
 
 ### 1. Only ignore things that actually exist in this repo
 
-Before adding a pattern, confirm something matching it is currently present (untracked, or a real artifact of the toolchain in use here). Do not paste in `github/gitignore` boilerplate templates. Do not add `node_modules/` to a Python repo "in case someone adds a frontend". Do not pre-emptively ignore IDE folders nobody on the team uses.
+Before adding a pattern, confirm a matching file or directory is **currently present on disk**. Not "the toolchain will eventually produce it." Not "it might appear later." Currently present, right now, visible to `ls -A` or `git status --short`.
 
-**Why:** Speculative ignores hide real problems. If `.idea/` shows up later and shouldn't be committed, *that's the moment* to add it — at which point you also know whether the whole team uses JetBrains or just one person (whose ignore belongs in `~/.config/git/ignore` instead, not the repo).
+This is strict on purpose. On a brand-new Spring Boot project where Maven hasn't run yet, you do not add `/target/` to `.gitignore` — there is no `target/` yet. Add it the first time it appears. Same for `node_modules/` before `npm install`, `dist/` before the first build, `.env` before someone creates one.
+
+Do not paste in `github/gitignore` boilerplate templates. Do not pre-emptively ignore folders for tooling nobody is using yet.
+
+**Why:** Speculative ignores hide real problems. If `.idea/` shows up later and shouldn't be committed, *that's the moment* to add it — at which point you also know whether the whole team uses JetBrains or just one person (whose ignore belongs in `~/.config/git/ignore` instead, not the repo). And the cost of adding a missing entry later is one line of diff; the cost of removing a stale one nobody remembers is endless "should I touch this?" friction.
 
 **How to check:**
 

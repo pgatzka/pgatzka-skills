@@ -24,6 +24,9 @@ Then install whichever plugins you want:
 |---|---|
 | [`git`](plugins/git) | Git workflow skills. Currently: `gitignore` (minimal, anchored, alphabetically-sorted entries — no speculative bulk-adds). |
 | [`java-development`](plugins/java-development) | Java engineering skills: `java-logging` (structured SLF4J, sensible levels, no sensitive data, no stack traces at ERROR), `javadoc` (don't state the obvious, all-or-nothing, ask before renaming bad params), `lombok` (use it if the project does, ask before adopting it if it doesn't). |
+| [`sql-development`](plugins/sql-development) | SQL / relational database skills. Currently: `database-design` (schema conventions, audit columns, dialect-aware rules across Postgres / MySQL / SQL Server / Oracle / SQLite, online migration safety, ASK-first on every undecided detail). |
+| [`workflow`](plugins/workflow) | Skills governing how Claude interacts with me. Currently: `ask-user-questions` (one-topic-per-question discipline), `persist-project-preferences` (durable preferences land in `CLAUDE.md`, not local memory). |
+| [`documentation`](plugins/documentation) | Documentation skills. Currently: `readme` (strict minimum — title, description, dev setup; nothing else by default) plus the `/readme-init` command to bootstrap a new minimal README. |
 
 ## Repo layout
 
@@ -38,15 +41,37 @@ Then install whichever plugins you want:
 │   │   └── skills/
 │   │       └── gitignore/
 │   │           └── SKILL.md
-│   └── java-development/
+│   ├── java-development/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/
+│   │       ├── java-logging/
+│   │       │   └── SKILL.md
+│   │       ├── javadoc/
+│   │       │   └── SKILL.md
+│   │       └── lombok/
+│   │           └── SKILL.md
+│   ├── sql-development/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/
+│   │       └── database-design/
+│   │           └── SKILL.md
+│   ├── workflow/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/
+│   │       ├── ask-user-questions/
+│   │       │   └── SKILL.md
+│   │       └── persist-project-preferences/
+│   │           └── SKILL.md
+│   └── documentation/
 │       ├── .claude-plugin/
 │       │   └── plugin.json
+│       ├── commands/
+│       │   └── readme-init.md
 │       └── skills/
-│           ├── java-logging/
-│           │   └── SKILL.md
-│           ├── javadoc/
-│           │   └── SKILL.md
-│           └── lombok/
+│           └── readme/
 │               └── SKILL.md
 ├── README.md
 └── .gitignore

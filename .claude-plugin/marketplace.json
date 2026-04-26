@@ -19,6 +19,27 @@
       "description": "Personal git workflow helpers. Currently includes .gitignore conventions (minimal, anchored, sorted entries).",
       "category": "tooling",
       "keywords": ["git", "gitignore", "vcs"]
+    },
+    {
+      "name": "sql-development",
+      "source": "./plugins/sql-development",
+      "description": "Personal SQL / relational database helpers. Currently: database-design (schema conventions, audit columns, dialect-aware rules, online migration safety, ASK-first on every undecided detail).",
+      "category": "language",
+      "keywords": ["sql", "database", "schema", "migration", "postgres", "mysql"]
+    },
+    {
+      "name": "workflow",
+      "source": "./plugins/workflow",
+      "description": "Personal workflow skills that govern how Claude interacts with me. Currently: ask-user-questions (one-topic-per-question discipline for AskUserQuestion), persist-project-preferences (durable preferences land in CLAUDE.md, not local memory).",
+      "category": "tooling",
+      "keywords": ["workflow", "interaction", "preferences", "claude-code"]
+    },
+    {
+      "name": "documentation",
+      "source": "./plugins/documentation",
+      "description": "Personal documentation skills. Currently: readme (strict-minimum README discipline — title, description, dev setup, nothing else by default) plus the /readme-init command to bootstrap one.",
+      "category": "tooling",
+      "keywords": ["documentation", "readme", "docs"]
     }
   ]
 }

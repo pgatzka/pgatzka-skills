@@ -84,26 +84,41 @@ log.error("Failed to settle order {} {}", orderId, ex);
 
 The `log.debug(message, throwable)` form (Throwable as the last positional argument, no `{}` for it) is how SLF4J renders the stack trace. Pair the ERROR + DEBUG lines so they show up adjacent in the file and can be correlated by timestamp / MDC.
 
-### 3. Guard expensive computation with `isXxxEnabled()` — but only when the computation is actually expensive
+### 3. Guard with `isXxxEnabled()` whenever the argument is computed only for the log line
 
-Parameterized logging already defers `toString()` on the arguments themselves, so you don't need a guard for cheap arguments. You **do** need a guard when constructing the argument requires non-trivial work (a DB call, a heavy aggregation, JSON serialization of a big object, a method call that hits the network).
+Parameterized logging defers `toString()` on the arguments themselves, but it does **not** defer the work of producing those arguments. Calls and calculations that exist solely to feed the log line still run at production runtime even when the level is disabled.
 
-```java
-// fine — calculateEbitMargin() is cheap; just log it
-double ebitMargin = calculateEbitMargin();
-log.debug("EBIT margin: {}", ebitMargin);
-```
+The rule: **if a value is computed only because a log call wants it, wrap the log call in `if (log.isXxxEnabled())`.** Don't try to judge whether the computation is "expensive enough" — `calculateEbitMargin()` looks fine today and quietly becomes a join across three tables next quarter, by which time nobody is touching the log call to add a guard.
+
+Field reads and locals you already have for non-logging reasons need no guard — the work was done anyway.
 
 ```java
-// guard — calculateEbitMargin() is expensive (e.g. aggregates over many rows)
-// without the guard, the calculation runs in production even when DEBUG is off
+// no guard — userId is a method parameter, already in scope
+log.debug("Resolved user {}", userId);
+
+// no guard — result was computed because the caller needs it
+Result result = service.execute(...);
+log.debug("Got result {}", result);
+
+// guard — calculateEbitMargin() exists only for this log line
 if (log.isDebugEnabled()) {
     double ebitMargin = calculateEbitMargin();
     log.debug("EBIT margin: {}", ebitMargin);
 }
+
+// guard — serializing the request is purely for diagnosis
+if (log.isTraceEnabled()) {
+    log.trace("Request payload: {}", jsonMapper.writeValueAsString(request));
+}
 ```
 
-Rule of thumb: if the value being logged is a field access, a local variable you already have, or a trivially-computed expression, no guard. If logging would force you to compute something *only for the log line*, guard it — or pass a `Supplier` if using Log4j2's fluent API. Don't sprinkle `isDebugEnabled()` everywhere "just in case" — it's noise.
+Log4j2's fluent `Supplier` API is an equivalent escape — the supplier only runs when the level is enabled:
+
+```java
+log.debug("EBIT margin: {}", () -> calculateEbitMargin());
+```
+
+The rule is "*computed only for the log line*", not "anywhere a log line touches a method". If you're already producing the value for other reasons, no guard. If you're producing it solely because the log call wants it, guard.
 
 ### 4. Use log levels deliberately
 
@@ -179,8 +194,8 @@ log.info("Settled order {} for customer {} in {} ms (items={}, total={})",
         orderId, customerId, durationMs, itemCount, total);
 
 // branch taken when it isn't obvious from inputs
-log.debug("Pricing {} via {} strategy (sku={}, region={})",
-        sku, strategy.name(), sku, region);
+log.debug("Pricing {} via {} strategy in region {}",
+        sku, strategy.name(), region);
 
 // the *unhappy* path, with context
 log.warn("Retrying call to {} after transient failure (attempt {} of {})",
@@ -207,6 +222,55 @@ try (MDC.MDCCloseable ignored = MDC.putCloseable("requestId", requestId)) {
 ```
 
 This keeps individual log calls focused on what *that line* is saying, while the context propagates. Configure your appender's pattern to render MDC keys (e.g. `%X{requestId}`).
+
+### 8. Use structured arguments for fields you'll query on
+
+A plain log line like `log.info("Settled order {}", orderId)` produces a text message — fine for humans, but log aggregators that index by field can't extract `orderId` cleanly without parsing the message. When a value needs to be *queryable* (filter on it, group by it, alert on it), put it in a structured field, not just in the message text.
+
+The mechanism depends on the stack:
+
+**Logback + `logstash-logback-encoder`** (very common):
+
+```java
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
+log.info("Settled order {}", kv("orderId", orderId));
+// Plain-text appender renders: "Settled order orderId=12345"
+// JSON appender renders:       {"message":"Settled order 12345","orderId":12345,...}
+```
+
+`kv("name", value)` adds the field to the JSON output and substitutes `name=value` into the text rendering. `value("name", value)` substitutes only the value (no `name=`) into the text but still adds the JSON field.
+
+**Log4j2** uses `ObjectMessage` or the fluent API:
+
+```java
+log.atInfo().log("Settled order {}", orderId);
+
+// arbitrary kv pairs:
+log.info(new ObjectMessage(Map.of("event", "order_settled", "orderId", orderId)));
+```
+
+**Default policy:**
+- **MDC** (rule 7) for context that applies to *every* line in a unit of work — `requestId`, `tenantId`, `userId`.
+- **Structured arguments** for per-event facts that the message itself is about — `orderId` on a "settled order" line.
+- **Plain `{}` placeholders** when the value is purely human-readable narrative and won't be queried.
+
+If the project uses only a plain-text appender, structured arguments degrade gracefully to `name=value` in the message — there's no downside to using them now and turning on JSON output later.
+
+### 9. Audit logs are a different system from operational logs
+
+When the requirement is "we must be able to prove later that X happened" — regulatory, security, financial reconciliation — the log is an *audit log*, not a diagnostic log. The rules above optimize for noise reduction and developer convenience; audit logging optimizes for completeness and durability, which means almost-opposite tradeoffs:
+
+- **Guaranteed delivery.** No async/buffered appenders that can drop under load. A synchronous sink (DB, dedicated audit service, Kafka with `acks=all`).
+- **Separate destination.** Don't mix audit events with operational logs. Operational logs are usually rotated or sampled on retention policies an auditor won't accept; mixing buries audit events in the volume.
+- **Structured by design.** Every audit event has a fixed schema — `actor`, `action`, `target`, `timestamp`, `outcome`, `correlationId`. Free-text messages are useless for auditing. Use structured arguments (rule 8) or, better, a typed audit API.
+- **Log success, not just failure.** Operational logs can skip the happy path; audit logs cannot. The point is the trail.
+- **Sensitive data still doesn't go in.** Rule 5 still applies. Auditors do not need plaintext PANs or session tokens.
+- **Don't sample or throttle.** Backpressure on operational logs is fine; audit events queue and persist, never drop.
+
+Practical pattern: define an `AuditLogger` interface (or use an existing one in the project) that writes to the audit sink directly. Don't route audit events through SLF4J — the two concerns drift apart and end up in the wrong place.
+
+If a project has retention or compliance requirements you didn't already know about (PCI, GDPR, SOX, HIPAA), ask before changing how audit-relevant events are captured — the rules above are defaults, but the specifics are usually dictated by the regulator.
 
 ## When reviewing existing code
 

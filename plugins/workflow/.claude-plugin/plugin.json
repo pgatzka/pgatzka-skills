@@ -1,0 +1,10 @@
+{
+  "name": "workflow",
+  "description": "Personal workflow skills that govern how Claude interacts with me — ask before acting, persist project preferences durably.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "keywords": ["workflow", "interaction", "preferences", "claude-code"],
+  "license": "MIT"
+}

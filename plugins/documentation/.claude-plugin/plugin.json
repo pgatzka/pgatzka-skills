@@ -1,0 +1,10 @@
+{
+  "name": "documentation",
+  "description": "Personal documentation skills. Currently: readme conventions plus a /readme-init command to bootstrap minimal READMEs.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "keywords": ["documentation", "readme", "docs"],
+  "license": "MIT"
+}

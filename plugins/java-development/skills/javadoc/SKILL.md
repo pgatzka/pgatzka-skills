@@ -52,7 +52,9 @@ When a method has a Javadoc block, it must contain:
 - a **summary sentence** that says something the signature doesn't (intent, side effects, contract, edge cases),
 - **`@param <name>`** for every parameter,
 - **`@return`** if the method returns non-void,
-- **`@throws <Exception>`** for every declared exception, and for unchecked exceptions that callers genuinely need to handle.
+- **`@throws <Exception>`** for every declared (checked) exception on the signature.
+
+Don't document unchecked exceptions in `@throws`. They're not part of the compiled-checked contract, the body's runtime exception set drifts as the implementation changes, and Javadoc-listed unchecked exceptions become silent lies. If a method *contractually* throws an unchecked exception (e.g. `IllegalArgumentException` on a precondition check that's part of the API), that belongs in the summary prose, not in a `@throws` tag that pretends the type system is enforcing it.
 
 For classes/interfaces: a summary, plus type parameters via `@param <T>` if generic.
 
@@ -106,7 +108,7 @@ public E insert(Entity object) { ... }
 
 // right — rename so the tag stands alone
 /**
- * Inserts the entity into the repository, returning the persisted instance with its generated id.
+ * Inserts the entity into the repository.
  * @param entity
  * @return
  */
@@ -121,24 +123,27 @@ public E insert(Entity entity) { ... }
 
 If the user declines, *then* add a tag description as the fallback. Don't make this decision unilaterally.
 
-The same logic applies to poorly-named `@throws` (e.g. a single `IllegalStateException` thrown for unrelated reasons — better to split into specific exceptions or document each case) and to confusing return types (often a sign the method is doing two things).
+The same logic applies to poorly-shaped `@throws` (a single declared exception type covering several distinct failure modes — better to split into specific subclasses, since callers usually want to react to them differently) and to confusing return types (often a sign the method is doing two things).
 
-### 6. Coverage: aim for everything visible to other classes
+### 6. Coverage: document wherever there's something useful to say
 
-Public, protected, and package-private classes/methods/fields should have Javadoc — *unless* rule 1 says there's nothing useful to add (rule 5 exceptions: simple getters/setters, pure overrides that don't change the contract, etc.).
+The default scope is public, protected, and package-private members — anywhere a reader hovering from another file might need help. But coverage is *conditional on rule 1*: a member only gets Javadoc when the signature alone doesn't tell the caller everything they need. If the signature carries the meaning, leave it bare.
 
-The default is: a reader hovering over a class member from somewhere else in the codebase should learn *something* they couldn't infer from the signature. If they can't, no doc is needed.
+Concretely: a member that does something non-obvious (intent, side effects, threading, edge cases, exceptional contract, lazy/eager behavior) gets Javadoc. A member whose signature is fully self-explanatory does not. There is no "you must document because it's public" rule — public visibility makes Javadoc *available*, it doesn't make it *required*.
 
 For private members, prefer a short `//` comment if the *why* is non-obvious. Don't reach for full Javadoc — nobody hovers over privates from outside the file.
 
-### 7. Skip Javadoc on these — even though they're public
+### 7. Common shapes of "nothing useful to add"
+
+These patterns are concrete instances of rule 1, not exceptions to rule 6 — they're the cases where the signature already does the documenting:
 
 - **Simple getters/setters** whose name and signature say everything (`getOrderId()`, `setActive(boolean active)`).
 - **Pure `@Override` methods** that don't add to or change the parent's contract. Let inheritance carry the doc silently — don't write `{@inheritDoc}` as a placeholder either, that's just rule-2 skeleton.
 - **Trivial constructors** that just assign their parameters to fields of the same name.
 - **Generated code, builders, equals/hashCode/toString** unless behavior is non-default.
+- **Lombok-generated members** (`@Getter`, `@Data`, `@RequiredArgsConstructor`, etc.) — generated methods have no source location to attach Javadoc to anyway, and they're rule-1 territory: a generated `getOrderId()` returning `orderId` has nothing useful to document. Don't delombok purely so you can attach Javadoc.
 
-If any of these has surprising behavior (a getter that lazily computes, a setter that fires events, an override that strengthens the contract) — then it deserves a Javadoc, and rule 3 applies.
+If any of these has surprising behavior (a getter that lazily computes, a setter that fires events, an override that strengthens the contract) — then there *is* something useful to say, and rule 3 applies.
 
 ### 8. No `@author`, `@since`, or `@version`
 

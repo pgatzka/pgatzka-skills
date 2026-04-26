@@ -42,10 +42,9 @@ Use the annotation, not the boilerplate. Manual code generated for the same purp
 | Manual `toString` | `@ToString` | Use `@ToString.Exclude` on lazy/circular fields (JPA relations, big payloads). |
 | All-args / no-args / required-args constructors | `@AllArgsConstructor` / `@NoArgsConstructor` / `@RequiredArgsConstructor` | `@RequiredArgsConstructor` generates a ctor over `final` and `@NonNull` fields — the right default for constructor injection. |
 | Hand-rolled builder class | `@Builder` (or `@SuperBuilder` for inheritance) | See pitfalls below before reaching for it on entities. |
-| Immutable value class with all of the above | `@Value` | Makes the class `final`, all fields `private final`, generates getters + ctor + equals/hashCode/toString. No setters. |
+| Immutable value class with all of the above | `@Value` | Makes the class `final` and all fields `private final`. **Don't use on Spring-proxied components, JPA entities, or anything Mockito spies on** — proxying needs non-final classes, and `@Value`'s finality silently breaks `@Transactional`, lazy entity proxies, and `@Spy`-on-real-instance. |
 | `private static final Logger log = LoggerFactory.getLogger(<Class>.class);` | `@Slf4j` (or matching annotation per logging API) | Covered in the `java-logging` skill. |
 | `if (x == null) throw new NullPointerException(...)` at method entry | `@NonNull` on the parameter | Generates the same NPE; cleaner signature. |
-| Manual try-with-resources around a single resource | `@Cleanup` on the local variable | Niche; usually plain try-with-resources is clearer. |
 
 ### `@Data` — use with caution
 
@@ -148,4 +147,5 @@ After adoption (or any time the user says "lombokify"), do a sweep across the re
 
 ## Cross-references
 
-- Logger fields: see the `java-logging` skill — when Lombok is present, `@Slf4j` is the default rather than a hand-declared `Logger` field.
+- **Logger fields:** see the `java-logging` skill — when Lombok is present, `@Slf4j` is the default rather than a hand-declared `Logger` field.
+- **Javadoc on generated members:** see the `javadoc` skill — Lombok-generated methods (from `@Getter`, `@Data`, `@RequiredArgsConstructor`, etc.) have no source location to attach Javadoc to anyway, and the javadoc skill's rule 1 / rule 7 mean that's the right outcome: a generated `getOrderId()` returning `orderId` has nothing useful to document. Don't try to delombok purely so you can attach Javadoc.
