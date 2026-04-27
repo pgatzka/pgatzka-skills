@@ -9,9 +9,9 @@
     {
       "name": "java-development",
       "source": "./plugins/java-development",
-      "description": "Personal Java development helpers. Includes structured logging (SLF4J), Javadoc, and Lombok conventions.",
+      "description": "Personal Java development helpers. Includes structured logging (SLF4J), Javadoc, Lombok, and Spring Boot conventions.",
       "category": "language",
-      "keywords": ["java", "logging", "slf4j", "javadoc", "lombok"]
+      "keywords": ["java", "logging", "slf4j", "javadoc", "lombok", "spring-boot"]
     },
     {
       "name": "git",
