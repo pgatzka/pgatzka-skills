@@ -44,7 +44,8 @@ If the project's dialect is unclear, ASK before producing DDL.
   | Create materialized view | `V<n>__create_materialized_view_<name>.sql` | `V0048__create_materialized_view_user_stats.sql` |
   | Create sequence | `V<n>__create_sequence_<sequencename>.sql` | `V0049__create_sequence_invoice_number.sql` |
   | Drop *(any object type)* | `V<n>__drop_<object>_<name>.sql` | `V0060__drop_table_legacy_audit.sql`, `V0061__drop_index_idx_user_legacy.sql` |
-  | Alter table | `V<n>__alter_table_<table>_<what_changed>.sql` | `V0070__alter_table_user_add_email.sql`, `V0071__alter_table_order_drop_legacy_id.sql` |
+  | Alter table — column-level | `V<n>__alter_table_<table>_<verb>_column_<col>[_<detail>]` *(verb: `add` / `drop` / `alter`)* | `V0070__alter_table_task_add_column_task_type.sql`, `V0071__alter_table_order_drop_column_legacy_id.sql`, `V0072__alter_table_task_alter_column_task_type_drop_default.sql` |
+  | Alter table — other | `V<n>__alter_table_<table>_<what_changed>.sql` | `V0073__alter_table_user_add_constraint_uq_email.sql` |
   | Rename *(any object type)* | `V<n>__rename_<object>_<old>_to_<new>.sql` | `V0080__rename_table_user_to_account.sql`, `V0081__rename_column_email_to_email_address_on_account.sql` |
 
 ### Naming
