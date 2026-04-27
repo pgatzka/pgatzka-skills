@@ -30,7 +30,22 @@ If the project's dialect is unclear, ASK before producing DDL.
 
 - **Flyway is the assumed migration tool unless the user says otherwise.** When the project uses something else (Liquibase, Alembic, Knex, Prisma migrate, …), ASK how the project's conventions differ.
 - **One SQL statement per Flyway file.** Easier to review, easier to roll back, easier to read in `git blame`. If a logical change requires multiple statements, that's multiple Flyway files in the right `V` order.
-- **Flyway filenames follow `V<number>__<description>.sql`** — e.g. `V0042__add_audit_columns_to_user.sql`. Versioned migrations only; if the project also uses repeatable (`R__`) or undo (`U__`) migrations, follow project convention but ASK on first use.
+- **Flyway filenames follow `V<number>__<description>.sql`** — Versioned migrations only; if the project also uses repeatable (`R__`) or undo (`U__`) migrations, follow project convention but ASK on first use.
+- **The `<description>` should state what the migration does, in `<action>_<object>_<name>` shape** for the operations below. **For any operation not in the table** (data backfills, multi-statement, anything else), invoke the `ask-user-questions` skill and ASK what filename shape to use — propose a candidate as the recommended option, but don't pick on the user's behalf:
+
+  | Operation | Filename shape | Example |
+  |---|---|---|
+  | Create table | `V<n>__create_table_<tablename>.sql` | `V0042__create_table_user.sql` |
+  | Create function | `V<n>__create_function_<functionname>.sql` | `V0043__create_function_set_updated_at.sql` |
+  | Create trigger | `V<n>__create_trigger_<triggername>.sql` | `V0044__create_trigger_user_set_updated_at.sql` |
+  | Create type | `V<n>__create_type_<typename>.sql` | `V0045__create_type_role.sql` |
+  | Create index | `V<n>__create_index_<indexname>.sql` | `V0046__create_index_idx_user_email.sql` |
+  | Create view | `V<n>__create_view_<viewname>.sql` | `V0047__create_view_active_user.sql` |
+  | Create materialized view | `V<n>__create_materialized_view_<name>.sql` | `V0048__create_materialized_view_user_stats.sql` |
+  | Create sequence | `V<n>__create_sequence_<sequencename>.sql` | `V0049__create_sequence_invoice_number.sql` |
+  | Drop *(any object type)* | `V<n>__drop_<object>_<name>.sql` | `V0060__drop_table_legacy_audit.sql`, `V0061__drop_index_idx_user_legacy.sql` |
+  | Alter table | `V<n>__alter_table_<table>_<what_changed>.sql` | `V0070__alter_table_user_add_email.sql`, `V0071__alter_table_order_drop_legacy_id.sql` |
+  | Rename *(any object type)* | `V<n>__rename_<object>_<old>_to_<new>.sql` | `V0080__rename_table_user_to_account.sql`, `V0081__rename_column_email_to_email_address_on_account.sql` |
 
 ### Naming
 
