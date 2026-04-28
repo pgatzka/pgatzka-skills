@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "description": "Personal workflow skills and session-lifecycle commands. Skills: ask-user-questions, persist-project-preferences. Commands: /session-handoff, /session-pickup.",
+  "description": "Personal workflow skills and session-lifecycle commands. Skills: ask-user-questions, persist-project-preferences, definition-of-done. Commands: /session-handoff, /session-pickup.",
   "author": {
     "name": "Philipp Gatzka",
     "email": "phil.gatzka@gmail.com"
