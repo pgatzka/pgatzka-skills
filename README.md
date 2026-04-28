@@ -22,6 +22,7 @@ Then install whichever plugins you want:
 
 | Plugin | What it does |
 |---|---|
+| [`build-tools`](plugins/build-tools) | Build-tool conventions: don't build unless required, never check in generated code, run the minimum invocation the goal needs. Tool-agnostic core with per-tool notes for Maven, Gradle, npm/pnpm/yarn, Cargo, Go. |
 | [`git`](plugins/git) | Git workflow skills. Currently: `gitignore` (minimal, anchored, alphabetically-sorted entries — no speculative bulk-adds). |
 | [`java-development`](plugins/java-development) | Java engineering skills: `java-logging` (structured SLF4J, sensible levels, no sensitive data, no stack traces at ERROR), `javadoc` (don't state the obvious, all-or-nothing, ask before renaming bad params), `lombok` (use it if the project does, ask before adopting it if it doesn't), `spring-boot` (`@Bean` methods are package-private). |
 | [`sql-development`](plugins/sql-development) | SQL / relational database skills. Currently: `database-design` (schema conventions, audit columns, dialect-aware rules across Postgres / MySQL / SQL Server / Oracle / SQLite, online migration safety, ASK-first on every undecided detail). |
@@ -35,6 +36,12 @@ Then install whichever plugins you want:
 ├── .claude-plugin/
 │   └── marketplace.json          # marketplace manifest — lists plugins
 ├── plugins/
+│   ├── build-tools/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/
+│   │       └── build-tools/
+│   │           └── SKILL.md
 │   ├── git/
 │   │   ├── .claude-plugin/
 │   │   │   └── plugin.json

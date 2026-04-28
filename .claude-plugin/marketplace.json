@@ -21,6 +21,13 @@
       "keywords": ["git", "gitignore", "vcs"]
     },
     {
+      "name": "build-tools",
+      "source": "./plugins/build-tools",
+      "description": "Personal build-tool conventions. Three principles: don't build unless required, never check in generated code, run the minimum invocation the goal needs. Tool-agnostic core with per-tool notes for Maven, Gradle, npm/pnpm/yarn, Cargo, Go.",
+      "category": "tooling",
+      "keywords": ["build", "maven", "gradle", "npm", "pnpm", "yarn", "cargo", "go", "make"]
+    },
+    {
       "name": "sql-development",
       "source": "./plugins/sql-development",
       "description": "Personal SQL / relational database helpers. Currently: database-design (schema conventions, audit columns, dialect-aware rules, online migration safety, ASK-first on every undecided detail).",
