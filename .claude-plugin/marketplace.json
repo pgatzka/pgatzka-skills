@@ -28,6 +28,13 @@
       "keywords": ["build", "maven", "gradle", "npm", "pnpm", "yarn", "cargo", "go", "make"]
     },
     {
+      "name": "ci-cd",
+      "source": "./plugins/ci-cd",
+      "description": "Personal CI/CD pipeline conventions. Core principle: DRTT — Don't Run Things Twice. Build once, consume the artifact in downstream jobs. Plus version pinning, least-privilege permissions, secrets discipline, fail-fast parallelism, every-step-has-a-verdict, concurrency control, timeouts, OIDC for cloud auth, and reproducibility.",
+      "category": "tooling",
+      "keywords": ["ci", "cd", "pipeline", "github-actions", "gitlab-ci", "jenkins", "circleci"]
+    },
+    {
       "name": "sql-development",
       "source": "./plugins/sql-development",
       "description": "Personal SQL / relational database helpers. Currently: database-design (schema conventions, audit columns, dialect-aware rules, online migration safety, ASK-first on every undecided detail).",
