@@ -1,0 +1,10 @@
+{
+  "name": "logging",
+  "description": "Personal language-agnostic logging conventions. Use a real logger over stdout; parameterized messages; sensible levels; guard expensive computations; never log sensitive data; structured output in production; correlation/trace IDs; audit vs. operational separation; sampling for high-volume logs. Per-language notes for Java/Kotlin (cross-references java-logging), Python, JS/TS, Go.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "keywords": ["logging", "observability", "slf4j", "pino", "winston", "slog", "structlog"],
+  "license": "MIT"
+}

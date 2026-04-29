@@ -7,6 +7,8 @@ description: Use whenever writing, reviewing, or modifying Java code that emits 
 
 Logs are a product surface. They get scraped, indexed, alerted on, and read at 3am during incidents. Treat every log line as something a future engineer (or an SRE who's never seen this code) will rely on. The rules below exist to make that future moment less painful — not as bureaucracy.
 
+**Boundary with the `logging` skill:** the general `logging` skill carries the language-agnostic *principles* (when to log, what level, what to include, structured output, correlation IDs, audit vs. operational, sampling). This skill carries the Java-specific *mechanics* — the SLF4J API choice, `@Slf4j` with Lombok, MDC syntax, the exact ERROR-message + DEBUG-stack split. Both apply on Java tasks; defer to the general skill for the *why*, this skill for the *how*.
+
 ## Core rules
 
 ### 1. Use a structured logging framework, never `System.out` / `System.err`
