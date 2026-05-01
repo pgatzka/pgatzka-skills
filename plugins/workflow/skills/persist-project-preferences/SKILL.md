@@ -11,6 +11,8 @@ Claude Code's default response to "I don't want to use JPA in this project" or s
 
 This skill makes that the default behavior for project-level preferences.
 
+**Boundary with the `claude-md` skill:** this skill decides *what* gets persisted to CLAUDE.md (versus local memory or chat-only context). The `claude-md` skill decides *how* CLAUDE.md is structured — length, content boundaries, when to split into `docs/agent/` pointers, when to layer per-subdirectory. When persisting a new preference, also consult `claude-md` to make sure the resulting addition fits the file's length and content discipline.
+
 ## When to apply
 
 Trigger when the user expresses a **durable, project-scoped** rule. Signals include:

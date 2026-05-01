@@ -51,7 +51,7 @@
     {
       "name": "workflow",
       "source": "./plugins/workflow",
-      "description": "Personal workflow skills and session-lifecycle commands. Skills: ask-user-questions (one-topic-per-question discipline for AskUserQuestion), persist-project-preferences (durable preferences land in CLAUDE.md, not local memory), definition-of-done (9-item self-check before claiming a coding task is finished). Commands: /session-handoff (capture session state at end), /session-pickup (read it on the next session).",
+      "description": "Personal workflow skills and session-lifecycle commands. Skills: ask-user-questions (one-topic-per-question discipline for AskUserQuestion), persist-project-preferences (durable preferences land in CLAUDE.md, not local memory), claude-md (CLAUDE.md structure: keep under ~200 lines, point to files don't inline, layer per-subdirectory), definition-of-done (9-item self-check before claiming a coding task is finished). Commands: /session-handoff (capture session state at end), /session-pickup (read it on the next session).",
       "category": "tooling",
       "keywords": ["workflow", "interaction", "preferences", "claude-code"]
     },

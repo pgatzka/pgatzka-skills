@@ -28,7 +28,7 @@ Then install whichever plugins you want:
 | [`git`](plugins/git) | Git workflow skills. Currently: `gitignore` (minimal, anchored, alphabetically-sorted entries — no speculative bulk-adds). |
 | [`java-development`](plugins/java-development) | Java engineering skills: `java-logging` (structured SLF4J, sensible levels, no sensitive data, no stack traces at ERROR), `javadoc` (don't state the obvious, all-or-nothing, ask before renaming bad params), `lombok` (use it if the project does, ask before adopting it if it doesn't), `spring-boot` (`@Bean` methods are package-private). |
 | [`sql-development`](plugins/sql-development) | SQL / relational database skills. Currently: `database-design` (schema conventions, audit columns, dialect-aware rules across Postgres / MySQL / SQL Server / Oracle / SQLite, online migration safety, ASK-first on every undecided detail). |
-| [`workflow`](plugins/workflow) | Skills governing how Claude interacts with me, plus session-lifecycle commands. Skills: `ask-user-questions` (one-topic-per-question discipline), `persist-project-preferences` (durable preferences land in `CLAUDE.md`, not local memory), `definition-of-done` (9-item self-check before claiming a coding task is finished). Commands: `/session-handoff` (capture session state at end), `/session-pickup` (read it on the next session). |
+| [`workflow`](plugins/workflow) | Skills governing how Claude interacts with me, plus session-lifecycle commands. Skills: `ask-user-questions` (one-topic-per-question discipline), `persist-project-preferences` (durable preferences land in `CLAUDE.md`, not local memory), `claude-md` (CLAUDE.md structure: keep under ~200 lines, point to files don't inline, layer per-subdirectory), `definition-of-done` (9-item self-check before claiming a coding task is finished). Commands: `/session-handoff` (capture session state at end), `/session-pickup` (read it on the next session). |
 | [`documentation`](plugins/documentation) | Documentation skills. `readme` (strict-minimum README — title, description, dev setup) and `wiki` (GitHub Wiki via submodule, five-category Tutorials/How-to/Reference/Explanations/Development taxonomy, pattern-detection prompt, post-task update check). Commands: `/readme-init`, `/wiki-init`. |
 
 ## Repo layout
@@ -88,6 +88,8 @@ Then install whichever plugins you want:
 │   │   │   └── session-pickup.md
 │   │   └── skills/
 │   │       ├── ask-user-questions/
+│   │       │   └── SKILL.md
+│   │       ├── claude-md/
 │   │       │   └── SKILL.md
 │   │       ├── definition-of-done/
 │   │       │   └── SKILL.md
