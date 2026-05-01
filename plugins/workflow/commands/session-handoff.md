@@ -1,5 +1,5 @@
 ---
-description: Capture session state into HANDOFF.md, CLAUDE.md (via the persist-project-preferences skill), and the project memory file before ending the session. Overwrites HANDOFF.md on each invocation; gitignores it the first time per project.
+description: Capture session state into HANDOFF.md, CLAUDE.md (via the persist-project-preferences skill), and the project memory file before ending the session. Overwrites HANDOFF.md on each invocation. HANDOFF.md is assumed to be excluded from version control via the user's global gitignore, not the per-repo .gitignore.
 ---
 
 # /session-handoff
@@ -23,9 +23,7 @@ Include:
 
 Be specific and concrete. Prefer code references over prose. The job of this document is to make the next session productive from turn one — not to be readable as a narrative.
 
-### Gitignore on first creation
-
-If `/HANDOFF.md` is not yet listed in the repo's `.gitignore`, add it. Follow the `gitignore` skill's rules: leading `/`, no comment, alphabetical placement in the files block. Tell the user what you added and confirm before writing. HANDOFF.md is personal session state and shouldn't be committed by default.
+HANDOFF.md is personal session state — it should be excluded from version control. The expectation is that the user's **global gitignore** (`core.excludesFile`, typically `~/.gitignore_global` or `~/.config/git/ignore`) lists `HANDOFF.md`, so every repo gets the exclusion automatically. Do not edit the per-repo `.gitignore` for this file.
 
 ## 2. Update `CLAUDE.md` — via the `persist-project-preferences` skill
 
