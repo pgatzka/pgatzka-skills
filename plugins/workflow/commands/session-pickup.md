@@ -1,29 +1,39 @@
 ---
-description: Start a new session by reading handoff docs and verifying understanding before doing any work. Falls back to a fresh-start orientation when no HANDOFF.md exists.
+description: Start a new session by reading the project's Obsidian vault notes (handoff.md + memory.md) plus the repo's CLAUDE.md, then verify understanding before doing any work. Falls back to a fresh-start orientation when no handoff note exists.
 ---
 
 # /session-pickup
 
-## Step 1 — read what exists
+## Step 1 — locate the vault folder
 
-Attempt to read each of these files in order. Don't error on missing files — note them and continue:
+Read the repo's `CLAUDE.md` for the project's vault folder path. By convention it's a one-line entry, for example:
 
-1. `HANDOFF.md` at the repo root.
-2. `CLAUDE.md` at the repo root.
-3. The project memory file at `~/.claude/projects/<slug>/memory/MEMORY.md`, where `<slug>` is the current working directory with each `/` replaced by `-` (e.g. cwd `/home/philg/projects/skills` → slug `-home-philg-projects-skills`). Compute from the actual `cwd`; do not hardcode.
+> Claude vault folder: `claude/pgatzka-skills`
 
-## Step 2 — pick the right mode
+**If the entry is missing** → fresh-start mode. The vault may not have been set up for this project yet. Continue to step 2 with no vault data, and surface this in the orientation so the user knows the next `/session-handoff` will ask for a folder path.
 
-**If `HANDOFF.md` exists** → continuing-session mode. Go to step 3.
+**If the `obsidian` MCP isn't available** → tell the user and stop. Don't guess at file locations and don't fall back to local files; the vault is the source of truth.
 
-**If `HANDOFF.md` does not exist** → fresh-start orientation:
+## Step 2 — read what exists
 
-- Tell the user explicitly: *"No HANDOFF.md found at the repo root. Either this is the first session in this repo, or no one has run `/session-handoff` yet."*
-- Summarize anything found in `CLAUDE.md` and the project memory file. If both are also missing or empty, say so.
+Read these in order. Don't error on missing notes — note them and continue:
+
+1. `<vault-folder>/handoff.md` via `obsidian_get_note`.
+2. `<vault-folder>/memory.md` via `obsidian_get_note`.
+3. The repo's `CLAUDE.md`.
+
+## Step 3 — pick the right mode
+
+**If `handoff.md` exists in the vault** → continuing-session mode. Go to step 4.
+
+**If `handoff.md` does not exist** → fresh-start orientation:
+
+- Tell the user explicitly: *"No handoff note found at `<vault-folder>/handoff.md`. Either this is the first session in this repo, or no one has run `/session-handoff` yet."* (If the vault folder entry was missing from `CLAUDE.md`, say that instead.)
+- Summarize anything found in `memory.md` and `CLAUDE.md`. If both are also missing or empty, say so.
 - Ask the user what they want to work on.
-- **Stop here.** Don't go to step 3.
+- **Stop here.** Don't go to step 4.
 
-## Step 3 — verify understanding (continuing-session mode only)
+## Step 4 — verify understanding (continuing-session mode only)
 
 Before doing anything else, tell the user, in your own words:
 
