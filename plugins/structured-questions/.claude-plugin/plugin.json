@@ -1,0 +1,10 @@
+{
+  "name": "structured-questions",
+  "description": "Forces every user-facing question to go through the AskUserQuestion tool with multiple neutral options, a Recommended choice, an Other affordance, and explicit Pros/Cons per option. Hook-enforced.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["questions", "askuserquestion", "ux", "claude-code", "hooks"]
+}

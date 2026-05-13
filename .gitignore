@@ -1,2 +1,4 @@
 /.claude/skills/
 /backup/
+__pycache__/
+*.pyc

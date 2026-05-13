@@ -1,0 +1,24 @@
+{
+  "name": "pgatzka-marketplace",
+  "description": "Philipp Gatzka's personal Claude Code plugin marketplace.",
+  "owner": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "structured-questions",
+      "source": "./plugins/structured-questions",
+      "description": "Forces every user-facing question through AskUserQuestion with neutral options, a Recommended choice, an Other affordance, and literal Pros/Cons per option. Hook-enforced.",
+      "category": "workflow",
+      "keywords": ["questions", "askuserquestion", "ux", "claude-code", "hooks"]
+    },
+    {
+      "name": "session-management",
+      "source": "./plugins/session-management",
+      "description": "Slash commands `/session-management:handoff` and `/session-management:pickup` for routing project state through Obsidian. Diátaxis-structured pages per the repo's documentation manual.",
+      "category": "workflow",
+      "keywords": ["obsidian", "session", "handoff", "pickup", "knowledge-base", "diataxis"]
+    }
+  ]
+}

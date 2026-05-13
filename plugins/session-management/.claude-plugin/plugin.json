@@ -1,0 +1,10 @@
+{
+  "name": "session-management",
+  "description": "Slash commands to hand off / pick up Claude Code sessions through Obsidian. /session-management:handoff writes everything worth preserving to the project's Obsidian folder as Diátaxis-structured pages. /session-management:pickup reads it back at session start.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["obsidian", "session", "handoff", "pickup", "knowledge-base", "diataxis"]
+}
