@@ -1,11 +1,11 @@
 ---
 name: structured-questions
-description: This skill should be used whenever Claude Code is about to ask the user a clarifying question, request a decision, present a choice between approaches, or pause for input mid-task. Triggers when Claude would otherwise write a clarifying question in prose ("Should I X or Y?", "Do you want A or B?"), when ambiguous requirements need disambiguation, when multiple valid approaches exist, when confirming assumptions before destructive actions, or any time a user choice would prevent guessing. Enforces six rules: use AskUserQuestion (not prose), present multiple options, mark exactly one as Recommended with the rationale, leave Other available, give each option explicit Pros and Cons in neutral language, and never put dependent questions in the same batch.
+description: This skill should be used whenever Claude Code is about to ask the user a clarifying question, request a decision, present a choice between approaches, seek permission, defer a decision to the user, scope a task at its start, disambiguate a target (e.g. "which `User` class did you mean?"), or pause for input mid-task. Triggers when Claude would otherwise write a clarifying question in prose ("Should I X or Y?", "Do you want A or B?", "Want me to…", "Should I go ahead and…", "Let me know if you'd prefer X or Y", "I can either X or Y — which would you like?", "Up to you", "Your call", "Which would you prefer", "Either way works", "I'll let you decide", "Want me to pick", "thoughts?", "WDYT", "sound good?", "okay?", "any preference?", "feel free to…", "if you want I can…", "I'll go with X unless you'd prefer Y", "whatever you think", "whatever works for you", "should this include tests?", "Here's my plan — does this look right?", "before I start, want me to…", "want me to proceed?", "shall I proceed?", "ready for me to start?", "green light?"), when ambiguous requirements need disambiguation, when multiple valid approaches exist, when confirming assumptions before destructive actions, when seeking permission before a risky operation, when offering a choice of what to work on next, when reacting to an error or tool failure with options ("the test failed — should I retry or investigate?", "file not found — create it?", "the migration would drop a column — proceed?"), or any time a user choice would prevent guessing. Statement-shaped questions ("I can do A or B."), permission-seeking phrasings, fake-declaratives ("I'll just X then."), auto-decisions ("I'll assume X", "I'm going to assume…"), and hedge-style deferrals count — they are still questions in disguise. Enforces six rules: use AskUserQuestion (not prose), present multiple options, mark exactly one as Recommended with the rationale, leave Other available, give each option explicit Pros and Cons in neutral language, and never put dependent questions in the same batch.
 ---
 
 # Structured Questions
 
-Constrain how Claude Code asks the user for input. Every user-facing question goes through `AskUserQuestion` with neutral options, an explicit Recommended choice, an Other affordance, and literal Pros/Cons per option. Never put questions whose answers depend on each other in the same batch.
+Constrain how Claude Code asks the user for input. Every user-facing question goes through `AskUserQuestion` with neutral options, an explicit Recommended choice, an Other affordance, and literal Pros/Cons per option. Dependent questions go in separate batches — see Rule 6 for the reasoning.
 
 A PreToolUse hook on `AskUserQuestion` enforces the structural rules at the tool boundary; this skill exists so the structure is right the first time and the hook rarely fires.
 
@@ -32,19 +32,56 @@ Out of scope:
 
 When about to write a question mark in chat followed by an implicit list of options ("Would you like A, B, or C?"), stop and call `AskUserQuestion` instead. The interactive component renders tappable options, captures structured input, and provides "Other" without retyping the question. Prose questions waste a turn and lose structure downstream.
 
-### Rule 2 — Always multiple options
+Example — a prose hedge becoming a structured call:
+
+```
+PROSE (don't do this):
+"I can use Vitest or Jest for the new test suite. Up to you — happy
+either way. Let me know if you'd prefer one."
+
+STRUCTURED CALL (do this):
+AskUserQuestion({
+  questions: [{
+    question: "Which test runner should the new suite use? Affects CI config and what mocking style fits.",
+    header: "Test runner",
+    options: [
+      { label: "Vitest (Recommended)",
+        description: "Pros: faster cold start; native ESM; drop-in for Vite. Cons: smaller plugin ecosystem than Jest." },
+      { label: "Jest",
+        description: "Pros: largest ecosystem; mature mocks/snapshots. Cons: slower in monorepos; ESM story is rough." }
+    ]
+  }]
+})
+```
+
+The prose version hides the trade-offs and asks the user to do the comparison from scratch. The structured call lays them out side-by-side so the answer is one tap.
+
+### Rule 2 — At least two options
 
 Every question carries at least two options. A single-option "question" is a statement; if there is only one path forward, take it without asking.
 
-Binary yes/no is acceptable *only* when the decision is genuinely two-state and confirmation is the point ("Confirm destructive action?", "Proceed with the push?"). Use whitelisted labels for those: `Yes`/`No`, `Confirm`/`Cancel`, `Proceed`/`Abort`, `Keep`/`Discard`, `Accept`/`Reject`, `Allow`/`Deny`, `Enable`/`Disable`. Any other two-option choice (e.g. "Spring vs Quarkus") is NOT a yes/no — apply the full Recommended + Pros/Cons rules.
+Binary yes/no is acceptable *only* when the decision is genuinely two-state and confirmation is the point ("Confirm destructive action?", "Proceed with the push?"). Use whitelisted labels for those: `Yes`/`No`, `Confirm`/`Cancel`, `Proceed`/`Abort`, `Keep`/`Discard`, `Accept`/`Reject`, `Allow`/`Deny`, `Enable`/`Disable`, `OK`/`Cancel`. Any other two-option choice (e.g. "Spring vs Quarkus") is not a yes/no — apply the full Recommended + Pros/Cons rules.
+
+**Y/N exemption from Rules 3 and 5.** A true Y/N pair is exempt from both the `(Recommended)` marker (Rule 3) and the literal `Pros:`/`Cons:` lines (Rule 5), because the choice is already as constrained as it can get. **Adding `(Recommended)` to a Y/N option revokes the exemption** — the hook treats it as a non-binary choice and re-applies Rules 3 and 5 fully. Either go all-in (real Y/N, no marker, no Pros/Cons needed) or build a structured choice with the marker and full Pros/Cons.
 
 ### Rule 3 — Mark one option Recommended
 
-Append `(Recommended)` to exactly one option's label. Put the rationale in that option's description, not in the question text. The user is free to ignore the recommendation; the marker exists so the recommendation is explicit instead of smuggled through word choice or option order.
+Append `(Recommended)` to exactly one option's label — at the end, not embedded mid-string, and with real option text in front of it. The hook checks that `(Recommended)` is the suffix of the label *and* that the label has actual option content before the marker, so all three of these forms are rejected: `(Recommended) Spring` (marker at start), `Spring (Recommended) for v2` (trailing text after marker), and `(Recommended)` alone (no option text at all). Put the rationale in that option's description, not in the question text. The user is free to ignore the recommendation; the marker exists so the recommendation is explicit instead of smuggled through word choice or option order.
+
+Smuggling example to avoid — the marker is missing, but the wording and ordering quietly steer the user toward option A:
+
+```
+Option A: "The clean, modern, well-supported approach."
+Option B: "Older alternative. Still functional but less actively maintained."
+```
+
+Both descriptions are loaded; A is listed first; neither is tagged `(Recommended)`. The user reads this as "you want me to pick A" without the explicit recommendation that lets them push back. Fix: drop the loaded adjectives, give each option real Pros/Cons, and put `(Recommended)` on whichever you actually recommend (the user can still pick the other).
+
+Write `(Recommended)` with a capital R as the canonical form — every example in this skill uses it. The hook accepts case variants (`(recommended)`, `(RECOMMENDED)`) as a safety net, but stick to canonical when authoring. See `${CLAUDE_PLUGIN_ROOT}/skills/structured-questions/references/hook_behavior.md` for the exact match rule.
 
 If no option is genuinely better than the others, the question is probably underspecified — narrow it until a recommendation emerges, or merge the indistinguishable options.
 
-The Y/N whitelist from Rule 2 is the only exception to Rule 3.
+For the Y/N exemption from this rule, see Rule 2.
 
 ### Rule 4 — Other is always available
 
@@ -52,9 +89,9 @@ The `AskUserQuestion` tool provides an "Other" affordance automatically. Do not 
 
 ### Rule 5 — Each option lists literal Pros and Cons in neutral language
 
-Every option's `description` field contains the literal substrings `Pros:` and `Cons:`. Write both sides factually and in roughly equal weight. The Recommended option still gets Cons; non-recommended options still get Pros. The goal: the user decides on a level playing field, with the Recommended marker acting as a tie-breaker rather than a thumb on the scale.
+Every option's `description` field contains the literal, case-sensitive substrings `Pros:` and `Cons:` — the hook checks for these exact tokens with capital `P` and capital `C`. Loose prose like "this option is great because…" or lowercase `pros:` will be rejected.
 
-The hook checks for these substrings literally. Loose prose like "this option is great because…" is rejected.
+Write both sides factually and in roughly equal weight. The Recommended option still gets Cons; non-recommended options still get Pros. The goal: the user decides on a level playing field, with the Recommended marker acting as a tie-breaker rather than a thumb on the scale.
 
 Example option description:
 
@@ -84,21 +121,15 @@ Two questions CAN sit in the same batch if neither answer would change the other
 
 ## Pre-send checklist
 
-Before invoking `AskUserQuestion`, verify each item. Stop and fix anything that fails — the hook will reject calls that violate Rules 2, 3, or 5 anyway.
+Before invoking `AskUserQuestion`, re-verify the six rules. Two prompts to flag specifically because the hook can't catch them:
 
-- Tool, not prose.
-- Every question has ≥2 options.
-- Each question has exactly one option whose label ends with `(Recommended)` — unless the question is a whitelisted Y/N pair.
-- Every option's description contains the literal substrings `Pros:` and `Cons:` — unless whitelisted Y/N.
-- Option wording is neutral; the Recommended option earns its mark through its Pros/Cons content, not via leading or loaded wording elsewhere.
-- The question text states *why* the answer matters.
-- No question's options or answer-space depends on another question in the same array.
-- Where the answer space is open-ended, the option set does not pretend to be exhaustive.
+- Option wording is genuinely neutral — the Recommended option earns its mark through its Pros/Cons content, not through leading wording elsewhere.
+- The question text states *why* the answer matters — what decision rides on it.
+
+For the full enforcement contract (which rules the hook checks, which are judgment-only, and how to recover from a deny), see `${CLAUDE_PLUGIN_ROOT}/skills/structured-questions/references/hook_behavior.md`.
 
 ## Why these rules exist
 
-The user's standing preference is to be asked rather than steered. Defaults that hide behind "reasonable choices" cause drift: the user ends up with a stack they didn't pick, only ratified. Forcing every question through a structured component with explicit Pros/Cons keeps each decision visible and reversible at decision time.
-
-Batch independence matters because parallel questions create false coherence — the user picks an option for Q1 expecting it to narrow Q2, only to find Q2 was already locked to the wrong frame. Splitting dependent questions across calls preserves the user's ability to redirect.
+The user's standing preference is to be asked rather than steered. Defaults that hide behind "reasonable choices" cause drift over time. The six rules above each carry their own rationale; the closing point is just that every decision should be visible and reversible at the moment it's made.
 
 Disable the plugin (`/plugin disable structured-questions`) to bypass all rules for a free-form session; otherwise the hook will block non-compliant `AskUserQuestion` calls and surface the specific rule violated.

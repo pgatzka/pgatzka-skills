@@ -1,0 +1,10 @@
+{
+  "name": "documentation",
+  "description": "Runs a maintenance sweep over the project's Obsidian documentation — creates missing pages, updates stale ones, deletes obsolete ones, in one pass — following the same Diátaxis manual the session-management plugin uses. Confirms before deleting anything the user didn't explicitly name. Separate from session-handoff: this is a doc-set maintenance pass, not a whole-session snapshot.",
+  "author": {
+    "name": "Philipp Gatzka",
+    "email": "phil.gatzka@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["obsidian", "documentation", "diataxis", "knowledge-base", "writing"]
+}

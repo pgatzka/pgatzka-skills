@@ -18,10 +18,11 @@ The skill teaches the rules; the hook enforces the structural ones at the tool b
 
 - `skills/structured-questions/SKILL.md` — soft enforcement; loads when Claude is about to ask a question and explains the six rules.
 - `hooks/hooks.json` + `hooks/scripts/validate_ask_user_question.py` — PreToolUse hook on `AskUserQuestion`. Blocks calls missing `(Recommended)` or `Pros:`/`Cons:` lines, with an exemption for whitelisted yes/no pairs.
+- `tests/test_validate_ask_user_question.py` — smoke tests for the hook, runnable post-install via `python3 -B plugins/structured-questions/tests/test_validate_ask_user_question.py`. Ships with the plugin so a fresh clone can verify the validator without external test infra.
 
 ## Requirements
 
-- `python` on `PATH` resolving to a Python 3 interpreter. The hook uses stdlib only.
+- `python3` on `PATH` (the hook invokes `python3 -B`). On Windows where only `python` is available, install Python 3 in a way that registers `python3` (the official python.org installer registers both; the Microsoft Store shim does not). The hook uses stdlib only.
 - Claude Code with plugin support.
 
 ## Install

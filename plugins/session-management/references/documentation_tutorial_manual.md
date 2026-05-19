@@ -294,7 +294,7 @@ Purpose: regular updates on progress, issues, and upcoming work.
 
 ### Decision Log (often missed)
 
-**Diátaxis category:** Reference.
+**Diátaxis category:** Explanation. (A decision record's primary job is to answer "why was this chosen and what alternatives were rejected" — that's understanding-oriented content, even though the page is consulted later as a reference.)
 
 Purpose: record significant decisions, their rationale, and who made them. Often called Architecture Decision Records (ADRs) in technical contexts.
 
@@ -396,7 +396,7 @@ How you name and structure individual pages determines whether anyone can find t
 ### Naming conventions
 
 - Use descriptive titles that match the words your readers would search for. "How to rotate API keys" beats "API Key Rotation Procedure" beats "Procedure-007."
-- Include the document type in formal documents: "SOP - Customer Onboarding," "ADR - 2026-03 - Choosing Postgres."
+- Include the document type in formal documents: "SOP - Customer Onboarding," "ADR - 2026-03-15 - Choosing Postgres."
 - Use ISO date format (YYYY-MM-DD) when dates appear in titles. It sorts correctly and avoids ambiguity.
 - Be consistent. If your SOPs use one naming pattern and your ADRs use another, that is fine. But every SOP should follow the same pattern.
 

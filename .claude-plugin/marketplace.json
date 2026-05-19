@@ -9,16 +9,23 @@
     {
       "name": "structured-questions",
       "source": "./plugins/structured-questions",
-      "description": "Forces every user-facing question through AskUserQuestion with neutral options, a Recommended choice, an Other affordance, and literal Pros/Cons per option. Hook-enforced.",
+      "description": "Forces every user-facing question to go through the AskUserQuestion tool with multiple neutral options, a Recommended choice, an Other affordance, and explicit Pros/Cons per option. Hook-enforced.",
       "category": "workflow",
       "keywords": ["questions", "askuserquestion", "ux", "claude-code", "hooks"]
     },
     {
       "name": "session-management",
       "source": "./plugins/session-management",
-      "description": "Slash commands `/session-management:handoff` and `/session-management:pickup` for routing project state through Obsidian. Diátaxis-structured pages per the repo's documentation manual.",
+      "description": "Slash commands to hand off / pick up Claude Code sessions through Obsidian. /session-management:handoff writes everything worth preserving to the project's Obsidian folder as Diátaxis-structured pages. /session-management:pickup reads it back at session start.",
       "category": "workflow",
       "keywords": ["obsidian", "session", "handoff", "pickup", "knowledge-base", "diataxis"]
+    },
+    {
+      "name": "documentation",
+      "source": "./plugins/documentation",
+      "description": "/documentation:documentation runs a maintenance sweep over the project's Obsidian documentation — creates missing pages, updates stale ones, deletes obsolete ones, in one pass — reusing the same Diátaxis manual the session-management plugin bundles. Confirms before deleting anything the user didn't explicitly name. Requires the session-management plugin to be installed in the same marketplace.",
+      "category": "workflow",
+      "keywords": ["obsidian", "documentation", "diataxis", "knowledge-base", "writing"]
     }
   ]
 }

@@ -10,6 +10,12 @@ Philipp Gatzka's personal Claude Code plugin marketplace.
 ## Install
 
 ```
-/plugin marketplace add <github-org>/<repo>
+/plugin marketplace add pgatzka/skills
 /plugin install <plugin-name>@pgatzka-marketplace
 ```
+
+Currently shipped plugins: `structured-questions`, `session-management`.
+
+## License
+
+MIT — see `LICENSE`.
