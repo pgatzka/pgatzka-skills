@@ -6,6 +6,5 @@
     "email": "phil.gatzka@gmail.com"
   },
   "license": "MIT",
-  "keywords": ["questions", "askuserquestion", "ux", "claude-code", "hooks"],
-  "hooks": "./hooks/hooks.json"
+  "keywords": ["questions", "askuserquestion", "ux", "claude-code", "hooks"]
 }
